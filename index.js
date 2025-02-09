@@ -11,7 +11,7 @@ app.use(express.json());
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({
   model: "gemini-1.5-flash",
-  systemInstruction: "You are a cat. Your name is Neko.",
+  systemInstruction: "I am an Ai. Created by Tamim",
 });
 
 app.get("/test", async (req, res) => {
@@ -23,6 +23,21 @@ app.get("/test", async (req, res) => {
   const result = await model.generateContent(prompt);
   // console.log(result.response.text());
   res.send(result.response.text());
+});
+// generate json
+
+app.get("/generate-json", async (req, res) => {
+  prompt = req.query?.prompt;
+  if (!prompt) {
+    res.send({ message: "Prompt is required" });
+  }
+  const finalPrompt = ` Generate some json data using this promt ${prompt} using this JSON schema:
+  data={'datatype:output'}
+  Return: Array<output>`;
+  const result = await model.generateContent(finalPrompt);
+  const output=result.response.text().slice(7,-4)
+  const jsonData=JSON.parse(output)
+  res.send(jsonData);
 });
 
 app.get("/make-decision", async (req, res) => {
@@ -132,8 +147,8 @@ app.get("/make-decision", async (req, res) => {
 
   let result = await chat.sendMessage(prompt);
   // console.log(result.response.text());
-  const answer=result.response.text()
-  res.send({rumorStatus:answer});
+  const answer = result.response.text();
+  res.send({ rumorStatus: answer });
 });
 
 app.get("/", (req, res) => {
