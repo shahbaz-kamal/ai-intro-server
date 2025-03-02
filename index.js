@@ -21,7 +21,7 @@ app.get("/test", async (req, res) => {
     return;
   }
   const result = await model.generateContent(prompt);
-  // console.log(result.response.text());
+  console.log(result.response.text());
   res.send(result.response.text());
 });
 // generate json
